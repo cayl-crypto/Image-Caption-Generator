@@ -21,7 +21,7 @@ def extract_and_remove_zip_file(full_path, target_dir):
         zipObj.extractall(path=target_dir)
     os.remove(full_path)
 
-def check_dataset_folder(dataset_folder):
+def create_dataset_folder(dataset_folder):
     try:
         os.mkdir(dataset_folder)
         print("Directory ", dataset_folder, " Created ")
