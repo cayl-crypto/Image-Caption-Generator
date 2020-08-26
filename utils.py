@@ -3,6 +3,8 @@ import sys
 from tqdm import tqdm
 import requests 
 from zipfile import ZipFile
+import json
+
 
 
 def download_url(url, save_path, chunk_size=128):
@@ -19,20 +21,28 @@ def extract_and_remove_zip_file(full_path, target_dir):
         zipObj.extractall(path=target_dir)
     os.remove(full_path)
 
-def download_dataset(Annotation=False, Train=False, Val=False):
-
-    dataset_folder = 'Datasets'
+def check_dataset_folder(dataset_folder):
     try:
         os.mkdir(dataset_folder)
         print("Directory ", dataset_folder, " Created ")
     except FileExistsError:
         print("Directory ", dataset_folder, " already exists")
 
+
+def get_dataset_folder():
+    return "Datasets"
+
+
+def download_dataset(Annotation=False, Train=False, Val=False):
+
+    dataset_folder = get_dataset_folder()
+    check_dataset_folder(dataset_folder)
+
     if Annotation:
         ## Download Annotations
         ann_dataset_url_path, ann_dataset_save_path  = get_mscoco_captioning_2017_annotations_path()
         ann_save_path = dataset_folder + "/" + ann_dataset_save_path
-        #download_url(url=ann_dataset_url_path, save_path=ann_save_path)
+        download_url(url=ann_dataset_url_path, save_path=ann_save_path)
         extract_and_remove_zip_file(full_path=ann_save_path, target_dir=dataset_folder)
 
     if Train:
@@ -49,7 +59,9 @@ def download_dataset(Annotation=False, Train=False, Val=False):
         download_url(url=val_dataset_url_path, save_path=val_save_path)
         extract_and_remove_zip_file(full_path=val_save_path, target_dir=dataset_folder)
     
-    
+
+
+
 
 def get_mscoco_captioning_train_2017_images_path():
     # returns download url of image captioning 2017 train images
@@ -64,3 +76,37 @@ def get_mscoco_captioning_2017_annotations_path():
     # returns download url of image captioning 2017 annotations
     return "http://images.cocodataset.org/annotations/annotations_trainval2017.zip","annotations2017.zip"
 
+def load_mscoco_annotations_val():
+   
+    ann_path = get_val_ann_path()
+
+    with open(ann_path) as f:
+        annotations = json.load(f)
+
+    # Store captions and image names in vectors
+    all_captions = []
+    all_img_names = []
+    print("Loading dataset...")
+    for annot in tqdm(annotations['annotations']):
+        caption = 'sStartword ' + annot['caption'] + ' eEndword'
+        image_id = annot['image_id']
+        full_coco_image_path = get_val_image_path() + "/" + '%012d.jpg' % (image_id)
+
+        all_img_names.append(full_coco_image_path)
+        all_captions.append(caption)
+    return all_captions, all_img_names
+
+def get_val_ann_path():
+    return get_dataset_folder() + "/" \
+    + "annotations" + "/" + "captions_val2017.json" 
+
+def get_val_image_path():
+    return get_dataset_folder() + "/" \
+        "val2017"
+def get_train_ann_path():
+    return get_dataset_folder() + "/" \
+    + "annotations" + "/" + "captions_train2017.json" 
+
+def get_train_image_path():
+    return get_dataset_folder() + "/" \
+        "train2017"
