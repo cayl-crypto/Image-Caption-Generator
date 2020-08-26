@@ -1,7 +1,7 @@
 # Default word tokens
 PAD_token = 0  # Used for padding short sentences
-SOS_token = 1  # Start-of-sentence token
-EOS_token = 2  # End-of-sentence token
+SOC_token = 1  # Start-of-sentence token
+EOC_token = 2  # End-of-sentence token
 
 class Voc:
     def __init__(self, name):
@@ -9,8 +9,8 @@ class Voc:
         self.trimmed = False
         self.word2index = {}
         self.word2count = {}
-        self.index2word = {PAD_token: "PAD", SOS_token: "SOC", EOS_token: "EOC"}
-        self.num_words = 3  # Count SOS, EOS, PAD
+        self.index2word = {PAD_token: "PAD", SOC_token: "SOC", EOC_token: "EOC"}
+        self.num_words = 3  # Count SOC, EOC, PAD
 
     def addCaption(self, caption):
         for word in caption.split(' '):
@@ -45,7 +45,7 @@ class Voc:
         # Reinitialize dictionaries
         self.word2index = {}
         self.word2count = {}
-        self.index2word = {PAD_token: "PAD", SOS_token: "SOS", EOS_token: "EOS"}
+        self.index2word = {PAD_token: "PAD", SOC_token: "SOC", EOC_token: "EOC"}
         self.num_words = 3 # Count default tokens
 
         for word in keep_words:
