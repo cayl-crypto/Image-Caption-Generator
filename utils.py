@@ -30,8 +30,8 @@ def create_dataset_folder(dataset_folder):
 
 
 def get_dataset_folder():
-    return "Datasets"
 
+    return "Datasets"
 
 def download_dataset(Annotation=False, Train=False, Val=False):
 
@@ -60,9 +60,6 @@ def download_dataset(Annotation=False, Train=False, Val=False):
         extract_and_remove_zip_file(full_path=val_save_path, target_dir=dataset_folder)
     
 
-
-
-
 def get_mscoco_captioning_train_2017_images_path():
     # returns download url of image captioning 2017 train images
     return "http://images.cocodataset.org/zips/train2017.zip","train2017.zip"
@@ -88,7 +85,7 @@ def load_mscoco_annotations_val():
     all_img_names = []
     print("Loading dataset...")
     for annot in tqdm(annotations['annotations']):
-        caption = 'sStartword ' + annot['caption'] + ' eEndword'
+        caption = 'SOC ' + annot['caption'] + ' EOC'
         image_id = annot['image_id']
         full_coco_image_path = get_val_image_path() + "/" + '%012d.jpg' % (image_id)
 
