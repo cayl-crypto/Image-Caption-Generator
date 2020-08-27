@@ -9,7 +9,6 @@ from tqdm import tqdm
 
 val_captions, val_image_names = load_mscoco_annotations_val()
 
-
 # TODO Tokenize captions
 voc = Voc(name="Vocabulary")
 
@@ -18,6 +17,7 @@ for caption in tqdm(val_captions):
     voc.addCaption(caption=caption)
 
 voc.trim(min_count=13)
+
 
 
 

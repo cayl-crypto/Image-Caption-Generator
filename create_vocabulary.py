@@ -1,3 +1,7 @@
+import unicodedata
+import re
+import os
+
 # Default word tokens
 PAD_token = 0  # Used for padding short sentences
 SOC_token = 1  # Start-of-sentence token
@@ -13,11 +17,12 @@ class Voc:
         self.num_words = 3  # Count SOC, EOC, PAD
 
     def addCaption(self, caption):
+        caption = normalizeString(caption)
         for word in caption.split(' '):
             self.addWord(word)
 
     def addWord(self, word):
-        word = word.lower()
+        
         if word not in self.word2index:
             self.word2index[word] = self.num_words
             self.word2count[word] = 1
@@ -50,3 +55,17 @@ class Voc:
 
         for word in keep_words:
             self.addWord(word)
+
+def unicodeToAscii(s):
+    return ''.join(
+        c for c in unicodedata.normalize('NFD', s)
+        if unicodedata.category(c) != 'Mn'
+    )
+
+# Lowercase, trim, and remove non-letter characters
+def normalizeString(s):
+    s = unicodeToAscii(s.lower().strip())
+    s = re.sub(r"([.!?])", r" \1", s)
+    s = re.sub(r"[^a-zA-Z]+", r" ", s)
+    s = re.sub(r"\s+", r" ", s).strip()
+    return s

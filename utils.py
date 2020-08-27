@@ -14,7 +14,6 @@ def download_url(url, save_path, chunk_size=128):
         for chunk in tqdm(r.iter_content(chunk_size=chunk_size)):
             fd.write(chunk)
 
-
 def extract_and_remove_zip_file(full_path, target_dir):
     with ZipFile(full_path, 'r') as zipObj:
         # Extract all the contents of zip file in current directory
@@ -27,7 +26,6 @@ def create_dataset_folder(dataset_folder):
         print("Directory ", dataset_folder, " Created ")
     except FileExistsError:
         print("Directory ", dataset_folder, " already exists")
-
 
 def get_dataset_folder():
 
@@ -59,12 +57,10 @@ def download_dataset(Annotation=False, Train=False, Val=False):
         download_url(url=val_dataset_url_path, save_path=val_save_path)
         extract_and_remove_zip_file(full_path=val_save_path, target_dir=dataset_folder)
     
-
 def get_mscoco_captioning_train_2017_images_path():
     # returns download url of image captioning 2017 train images
     return "http://images.cocodataset.org/zips/train2017.zip","train2017.zip"
    
-
 def get_mscoco_captioning_val_2017_images_path():
     # returns download url of image captioning 2017 validation images
     return "http://images.cocodataset.org/zips/val2017.zip","val2017.zip"
@@ -100,6 +96,7 @@ def get_val_ann_path():
 def get_val_image_path():
     return get_dataset_folder() + "/" \
         "val2017"
+
 def get_train_ann_path():
     return get_dataset_folder() + "/" \
     + "annotations" + "/" + "captions_train2017.json" 
