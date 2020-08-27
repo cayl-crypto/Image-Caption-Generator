@@ -81,7 +81,7 @@ def load_mscoco_annotations_val():
     all_img_names = []
     print("Loading dataset...")
     for annot in tqdm(annotations['annotations']):
-        caption = 'SOC ' + annot['caption'] + ' EOC'
+        caption = 'soc ' + annot['caption'] + ' eoc'
         image_id = annot['image_id']
         full_coco_image_path = get_val_image_path() + "/" + '%012d.jpg' % (image_id)
 

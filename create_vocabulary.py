@@ -1,7 +1,7 @@
 import unicodedata
 import re
 import os
-
+from tqdm import tqdm
 # Default word tokens
 PAD_token = 0  # Used for padding short sentences
 SOC_token = 1  # Start-of-sentence token
@@ -13,11 +13,11 @@ class Voc:
         self.trimmed = False
         self.word2index = {}
         self.word2count = {}
-        self.index2word = {PAD_token: "PAD", SOC_token: "SOC", EOC_token: "EOC"}
+        self.index2word = {PAD_token: "pad", SOC_token: "soc", EOC_token: "eoc"}
         self.num_words = 3  # Count SOC, EOC, PAD
 
     def addCaption(self, caption):
-        caption = normalizeString(caption)
+        
         for word in caption.split(' '):
             self.addWord(word)
 
@@ -50,7 +50,7 @@ class Voc:
         # Reinitialize dictionaries
         self.word2index = {}
         self.word2count = {}
-        self.index2word = {PAD_token: "PAD", SOC_token: "SOC", EOC_token: "EOC"}
+        self.index2word = {PAD_token: "pad", SOC_token: "soc", EOC_token: "eoc"}
         self.num_words = 3 # Count default tokens
 
         for word in keep_words:
@@ -63,9 +63,18 @@ def unicodeToAscii(s):
     )
 
 # Lowercase, trim, and remove non-letter characters
-def normalizeString(s):
+def normalizeCaption(s):
     s = unicodeToAscii(s.lower().strip())
     s = re.sub(r"([.!?])", r" \1", s)
     s = re.sub(r"[^a-zA-Z]+", r" ", s)
     s = re.sub(r"\s+", r" ", s).strip()
     return s
+
+
+def normalizeAllCaptions(all_captions):
+    normalized_captions = []
+    print("Normalizing captions...")
+    for caption in tqdm(all_captions):   
+        normalized_captions.append(normalizeCaption(caption))
+
+    return normalized_captions
