@@ -11,8 +11,8 @@ class Voc:
     def __init__(self, name):
         self.name = name
         self.trimmed = False
-        self.word2index = {}
-        self.word2count = {}
+        self.word2index = {"pad": PAD_token, "soc": SOC_token, "eoc": EOC_token}
+        self.word2count = {"pad": 0, "soc": 0, "eoc": 0}
         self.index2word = {PAD_token: "pad", SOC_token: "soc", EOC_token: "eoc"}
         self.num_words = 3  # Count SOC, EOC, PAD
 
@@ -48,8 +48,8 @@ class Voc:
         ))
 
         # Reinitialize dictionaries
-        self.word2index = {}
-        self.word2count = {}
+        self.word2index = {"pad": PAD_token, "soc": SOC_token, "eoc": EOC_token}
+        self.word2count = {"pad": 0, "soc": 0, "eoc": 0}
         self.index2word = {PAD_token: "pad", SOC_token: "soc", EOC_token: "eoc"}
         self.num_words = 3 # Count default tokens
 

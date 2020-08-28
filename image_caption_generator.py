@@ -2,7 +2,7 @@ import torch
 import numpy as np
 from utils import load_mscoco_annotations_val
 from create_vocabulary import Voc, normalizeAllCaptions
-from tokenization import tokenize
+from tokenization import tokenize, get_maximum_length_of_captions
 from tqdm import tqdm
 
 # Download dataset is done.
@@ -25,6 +25,8 @@ for caption in tqdm(val_normalized_captions):
 voc.trim(min_count=13)
 
 tokenized_val_captions = tokenize(voc, val_normalized_captions)
+
+max_len = get_maximum_length_of_captions(tokenized_val_captions)
 
 # TODO pad tokenized captions.
 
