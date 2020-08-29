@@ -11,25 +11,30 @@ from tqdm import tqdm
 
 val_captions, val_image_names = load_mscoco_annotations_val()
 
-# Tokenize captions is done.
-voc = Voc(name="Vocabulary")
+## Tokenize captions is done.
+#voc = Voc(name="Vocabulary")
 
-val_normalized_captions = normalizeAllCaptions(val_captions)
+#val_normalized_captions = normalizeAllCaptions(val_captions)
 
-print()
-print("Creating Vocabulary...")
-for caption in tqdm(val_normalized_captions):
+#print()
+#print("Creating Vocabulary...")
+#for caption in tqdm(val_normalized_captions):
 
-    voc.addCaption(caption=caption)
+#    voc.addCaption(caption=caption)
 
-voc.trim(min_count=13)
+#voc.trim(min_count=13)
 
-tokenized_val_captions = tokenize(voc, val_normalized_captions)
+#tokenized_val_captions = tokenize(voc, val_normalized_captions)
 
-val_captions_tokens = np.array(pad_sequences(tokenized_val_captions))
-print(val_captions_tokens.shape)
-
-# Captions are padded.
+#val_captions_tokens = np.array(pad_sequences(tokenized_val_captions))
+#print(val_captions_tokens.shape)
+## Captions are padded.
+#np.save('val_captions_tokens.npy', val_captions_tokens)
+# Captions are saved.
+print("Loading val_captions_tokens.npy ...")
+val_captions_tokens = np.load('val_captions_tokens.npy')
+print("Captions are loaded.")
+# Captions are loaded.
 
 # TODO extract image features.
 
