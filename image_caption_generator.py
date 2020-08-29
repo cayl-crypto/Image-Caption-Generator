@@ -2,7 +2,7 @@ import torch
 import numpy as np
 from utils import load_mscoco_annotations_val
 from create_vocabulary import Voc, normalizeAllCaptions
-from tokenization import tokenize, get_maximum_length_of_captions
+from tokenization import tokenize, pad_sequences
 from tqdm import tqdm
 
 # Download dataset is done.
@@ -26,9 +26,12 @@ voc.trim(min_count=13)
 
 tokenized_val_captions = tokenize(voc, val_normalized_captions)
 
-max_len = get_maximum_length_of_captions(tokenized_val_captions)
+val_captions_tokens = np.array(pad_sequences(tokenized_val_captions))
+print(val_captions_tokens.shape)
 
-# TODO pad tokenized captions.
+# Captions are padded.
+
+# TODO extract image features.
 
 
 
