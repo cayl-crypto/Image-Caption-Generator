@@ -4,8 +4,8 @@ from tqdm import tqdm
 import requests 
 from zipfile import ZipFile
 import json
-
-
+from PIL import Image
+import matplotlib.pyplot as plt
 
 def download_url(url, save_path, chunk_size=128):
     r = requests.get(url, stream=True)
@@ -104,3 +104,19 @@ def get_train_ann_path():
 def get_train_image_path():
     return get_dataset_folder() + "/" \
         "train2017"
+
+def load_image(path):
+    # reads the image with given path
+    
+    
+    return Image.open(path)
+
+def show_image(img):
+    # shows the given image
+    img.show()
+
+def gray_to_RGB(im):
+    return im.convert('RGB')
+    
+    
+   
