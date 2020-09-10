@@ -37,9 +37,9 @@ val_captions, val_image_names = load_mscoco_annotations_val()
 ## Captions are padded.
 #np.save('val_captions_tokens.npy', val_captions_tokens)
 # Captions are saved.
-#print("Loading val_captions_tokens.npy ...")
-#val_captions_tokens = np.load('val_captions_tokens.npy')
-#print("Captions are loaded.")
+print("Loading val_captions_tokens.npy ...")
+val_captions_tokens = np.load('val_captions_tokens.npy')
+print("Captions are loaded.")
 # Captions are loaded.
 
 # DONE load images
@@ -91,10 +91,11 @@ feature_size = 2048
 #        start_ids_of_batch = end_ids_of_batch
 #        end_ids_of_batch = start_ids_of_batch + feature_extraction_batch_size
         
-
-#np.save('val_image_features.npy', all_image_features)
 #torch.save(all_image_features, 'val_image_features.pt')
+print("Loading val_image_features.pt ...")
 val_features = torch.load("val_image_features.pt")
+print("Features are loaded.")
+# TODO Design the model and batchify the dataset for training
 
 
 
