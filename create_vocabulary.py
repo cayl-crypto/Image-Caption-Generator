@@ -2,6 +2,8 @@ import unicodedata
 import re
 import os
 from tqdm import tqdm
+import numpy as np
+import json
 # Default word tokens
 PAD_token = 0  # Used for padding short sentences
 SOC_token = 1  # Start-of-sentence token
@@ -55,6 +57,31 @@ class Voc:
 
         for word in keep_words:
             self.addWord(word)
+
+    def save_vocabulary(self):
+        save_json_file(self.word2index, "word2index.json")
+        save_json_file(self.index2word, "index2word.json")
+        
+
+    def load_vocabulary(self):
+        self.word2index = load_json_file("word2index.json")
+        self.index2word = load_json_file("index2word.json")
+        
+
+
+def save_json_file(dict, path):
+    
+
+    with open(path, "w") as file:
+        json.dump(dict, file)
+
+
+def load_json_file(path):
+    with open(path, "r") as f:
+        file = json.load(f)
+    return file
+    
+
 
 def unicodeToAscii(s):
     return ''.join(

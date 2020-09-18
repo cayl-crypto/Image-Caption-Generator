@@ -341,3 +341,7 @@ healthchecksdb
 /Datasets
 /val_captions_tokens.npy
 /val_image_features.pt
+/word2index.npy
+/index2word.npy
+/word2index.json
+/index2word.json
