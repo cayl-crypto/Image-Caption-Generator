@@ -345,3 +345,4 @@ healthchecksdb
 /index2word.npy
 /word2index.json
 /index2word.json
+/val_captions_tokens.pt
