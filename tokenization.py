@@ -24,14 +24,17 @@ def get_maximum_length_of_captions(tokenized_captions):
     return max_len
 
 
-def pad_sequences(sequences):
+def pad_sequences(sequences, mlen=15):
     max_len = get_maximum_length_of_captions(sequences)
 
     padded_tokens = []
 
     print("Padding tokens...")
     for sequence in tqdm(sequences):
-        for i in range(max_len - len(sequence) + 1):
+        
+        for i in range(mlen - len(sequence) + 1):
             sequence.append(0)
         padded_tokens.append(sequence)
+
+    print("Padded.")
     return padded_tokens

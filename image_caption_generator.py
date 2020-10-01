@@ -13,6 +13,11 @@ from tqdm import tqdm
 from Inception import inception_v3
 import time
 from torchvision import transforms
+
+"""
+If there is too much padding the system will memorize padding 
+and will not generate a meaningful caption.
+"""
 # Download dataset is done.
 
 # Load dataset is done.
@@ -20,17 +25,17 @@ from torchvision import transforms
 val_captions, val_image_names = load_mscoco_annotations_val()
 
 # Tokenize captions is done.
-print("Loading val_captions_tokens.npy ...")
-#val_captions_tokens = np.load('val_captions_tokens.npy')
+#print("Loading val_captions_tokens.pt ...")
+##val_captions_tokens = np.load('val_captions_tokens.npy')
 val_captions_tokens = torch.load('val_captions_tokens.pt')
 
-print("Captions are loaded.")
+#print("Captions are loaded.")
 voc = Voc(name="Vocabulary")
 voc.load_vocabulary()
-voc_size = len(voc.index2word)
-#s = str(0)
-#print(voc.index2word[s])
-# Vocabulary is loaded.
+
+
+##print(voc.index2word[s])
+## Vocabulary is loaded.
 #val_normalized_captions = normalizeAllCaptions(val_captions)
 
 #print()
@@ -42,14 +47,40 @@ voc_size = len(voc.index2word)
 #voc.trim(min_count=13)
 
 #tokenized_val_captions = tokenize(voc, val_normalized_captions)
+voc_size = len(voc.index2word)
+## Before go any further extract captions that have 16 or more tokens.
+#core_img_path = []
+#core_img_capt_tokens = []
+#for img_path, img_cap in zip(val_image_names,tokenized_val_captions):
+    
+#    if len(img_cap) <= 15:
+#        core_img_path.append(img_path)
+#        core_img_capt_tokens.append(img_cap)
 
-#val_captions_tokens = np.array(pad_sequences(tokenized_val_captions))
+#print("LEN of core im path")
+#print(len(core_img_path))
+#print(len(core_img_capt_tokens))
+
+#prints tokenized captions lengths for best padding the 15 will be fine.
+#len_captions = np.zeros((50,), dtype=int)
+#for caption in tqdm(tokenized_val_captions):
+#    len_captions[len(caption)] += 1
+
+#print(len_captions)
+
+
+
+# pad captions
+#print("shape of val_captions_tokens")
+#val_captions_tokens = np.array(pad_sequences(core_img_capt_tokens))
+#print(val_captions_tokens.shape)
 #print(val_captions_tokens.shape)
 ## Captions are padded.
-##np.save('val_captions_tokens.npy', val_captions_tokens)
-#val_captions_tokens_tensor = torch.from_numpy(val_captions_tokens)
-#torch.save(val_captions_tokens_tensor,'val_captions_tokens.pt')
+
+#val_captions_tokens = torch.from_numpy(val_captions_tokens)
+#torch.save(val_captions_tokens,'val_captions_tokens.pt')
 #print("tensor saved.")
+#val_image_names = core_img_path
 ## Captions are saved.
 #voc.save_vocabulary()
 ## Vocabulary is saved.
@@ -84,7 +115,7 @@ feature_size = 2048
 #        features = model.forward(batch)
 #    return features
 
-# Extract all features with batches
+## Extract all features with batches
 #for ids, im_path in tqdm(enumerate(val_image_names)):
 #    # completes in about 30 mins.
 #    im = load_image(im_path)
@@ -106,6 +137,7 @@ feature_size = 2048
 #        end_ids_of_batch = start_ids_of_batch + feature_extraction_batch_size
         
 #torch.save(all_image_features, 'val_image_features.pt')
+#val_features=all_image_features
 print("Loading val_image_features.pt ...")
 val_features = torch.load("val_image_features.pt")
 print("Features are loaded.")
@@ -150,10 +182,10 @@ class Decoder(nn.Module):
 dec = Decoder(hidden_size=hidden_size, output_size=output_size, embed_size=embed_size,num_layers=num_layers, feature_size=feature_size)
 dec.cuda()
 dec.train()
-print(dec)
-hidden = torch.zeros(num_layers,batch_size,hidden_size).cuda()
-inp = torch.zeros(1,batch_size).to(torch.int64).cuda()
-a,b = dec(inp, hidden)
+#print(dec)
+#hidden = torch.zeros(num_layers,batch_size,hidden_size).cuda()
+#inp = torch.zeros(1,batch_size).to(torch.int64).cuda()
+#a,b = dec(inp, hidden)
 
 
 
@@ -202,38 +234,40 @@ def showPlot(points):
 
 
 
-def generate_caption(feature, max_len=30):
+def generate_caption(deco, feature, max_len=30):
     "Does not work..."
-    decoder_hidden = torch.zeros(num_layers,batch_size,hidden_size).cuda()
+    decoder_hidden = torch.zeros(num_layers,1,hidden_size).cuda()
     for i in range(num_layers):
         decoder_hidden[i] = feature
 
-    input = voc.word2index["soc"].type(torch.LongTensor)
-    tokens = []
+    #input = torch.tensor(voc.word2index["soc"]).type(torch.LongTensor).cuda()
+    input = torch.ones(1, 1).type(torch.LongTensor).cuda()
+    caption = ""
     for i in range(max_len):
-        out,decoder_hidden = dec(input,decoder_hidden)
-        tokens.append(out)
-        input = out
+        out,decoder_hidden = deco(input,decoder_hidden)
+        out = out.argmax(dim=1)
+       
+        caption += voc.index2word[str(int(out))] + " "
+        
+        input = out.unsqueeze(0)
 
-    print(tokens)
+    print(caption)
 
 
-def train(decoder, batch_size=64, n_iters=20, print_every=1000, plot_every=100, learning_rate=0.01):
-    start = time.time()
+def train(decoder, batch_size=64, n_iters=20, print_every=1000, learning_rate=0.01):
+ 
     plot_losses = []
     print_loss_total = 0  # Reset every print_every
     plot_loss_total = 0  # Reset every plot_every
 
     decoder_optimizer = optim.SGD(decoder.parameters(), lr=learning_rate)
-   
+    compare_loss = 99999999
     criterion = nn.NLLLoss()
     batch_index = 0
     data_sample = val_features.shape[0]
    
     for iter in tqdm(range(1, n_iters + 1)):
-        dec.eval()
-        generate_caption(val_features[0,:])
-        dec.train()
+        
         if batch_index + batch_size > data_sample:
             tokens = val_captions_tokens[:,batch_index:].cuda()
             features = val_features[batch_index:,:].cuda()
@@ -245,22 +279,26 @@ def train(decoder, batch_size=64, n_iters=20, print_every=1000, plot_every=100, 
        
         loss = train_step(tokens, features, decoder, decoder_optimizer, criterion)
         print_loss_total += loss
-        plot_loss_total += loss
+        
 
         if iter % print_every == 0:
             print_loss_avg = print_loss_total / print_every
             print_loss_total = 0
-            print('%s (%d %d%%) %.4f' % (timeSince(start, iter / n_iters),
-                                         iter, iter / n_iters * 100, print_loss_avg))
+            print(print_loss_avg)
+            print()
+            if print_loss_avg < compare_loss:
+                torch.save(decoder, "best_decoder.pt")
+                compare_loss = print_loss_avg
+            decoder.eval()
+            generate_caption(deco=decoder, feature=val_features[0,:])
+            decoder.train()
 
-        if iter % plot_every == 0:
-            plot_loss_avg = plot_loss_total / plot_every
-            plot_losses.append(plot_loss_avg)
-            plot_loss_total = 0
+       
+    
 
-    showPlot(plot_losses)
-
-train(dec)
+train(decoder=dec, n_iters=120000, print_every=1000, learning_rate=0.001)
+# Model class must be defined somewhere
+# model = torch.load("best_decoder.pt")
 
 # TODO complete generate caption and analyze results check if the system is working.
 
