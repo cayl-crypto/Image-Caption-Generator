@@ -296,7 +296,7 @@ def train(decoder, batch_size=64, n_iters=20, print_every=1000, learning_rate=0.
        
     
 
-train(decoder=dec, n_iters=120000, print_every=1000, learning_rate=0.001)
+train(decoder=dec, n_iters=1000, print_every=50, learning_rate=0.01)
 # Model class must be defined somewhere
 # model = torch.load("best_decoder.pt")
 
