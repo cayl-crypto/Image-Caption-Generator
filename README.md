@@ -1,6 +1,9 @@
 # Image-Caption-Generator
 
-Python Implementation of an image caption generator.
+Python Implementation of an encoder-decoder based image caption generator.
+
+encoder - computer vision side
+decoder - natural language processing side
 
 Using Inception-v3 the features of the images are extracted.
 
