@@ -1,3 +1,3 @@
 # Image-Caption-Generator
 
-Implementation of an image caption generator.
+Python Implementation of an image caption generator.
