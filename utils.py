@@ -1,11 +1,12 @@
 import os
 import sys
 from tqdm import tqdm
-import requests 
+import requests
 from zipfile import ZipFile
 import json
 from PIL import Image
 import matplotlib.pyplot as plt
+
 
 def download_url(url, save_path, chunk_size=128):
     r = requests.get(url, stream=True)
@@ -14,11 +15,13 @@ def download_url(url, save_path, chunk_size=128):
         for chunk in tqdm(r.iter_content(chunk_size=chunk_size)):
             fd.write(chunk)
 
+
 def extract_and_remove_zip_file(full_path, target_dir):
     with ZipFile(full_path, 'r') as zipObj:
         # Extract all the contents of zip file in current directory
         zipObj.extractall(path=target_dir)
     os.remove(full_path)
+
 
 def check_dataset_folder(dataset_folder):
     try:
@@ -27,50 +30,53 @@ def check_dataset_folder(dataset_folder):
     except FileExistsError:
         print("Directory ", dataset_folder, " already exists")
 
-def get_dataset_folder():
 
+def get_dataset_folder():
     return "Datasets"
 
-def download_dataset(Annotation=False, Train=False, Val=False):
 
+def download_dataset(annotation=False, train=False, val=False):
     dataset_folder = get_dataset_folder()
     check_dataset_folder(dataset_folder)
 
-    if Annotation:
-        ## Download Annotations
-        ann_dataset_url_path, ann_dataset_save_path  = get_mscoco_captioning_2017_annotations_path()
+    if annotation:
+        # Download Annotations
+        ann_dataset_url_path, ann_dataset_save_path = get_mscoco_captioning_2017_annotations_path()
         ann_save_path = dataset_folder + "/" + ann_dataset_save_path
         download_url(url=ann_dataset_url_path, save_path=ann_save_path)
         extract_and_remove_zip_file(full_path=ann_save_path, target_dir=dataset_folder)
 
-    if Train:
-        ## Download Train Images
-        train_dataset_url_path, train_dataset_save_path  = get_mscoco_captioning_train_2017_images_path()
-        train_save_path = dataset_folder+ "/" + train_dataset_save_path
+    if train:
+        # Download Train Images
+        train_dataset_url_path, train_dataset_save_path = get_mscoco_captioning_train_2017_images_path()
+        train_save_path = dataset_folder + "/" + train_dataset_save_path
         download_url(url=train_dataset_url_path, save_path=train_save_path)
         extract_and_remove_zip_file(full_path=train_save_path, target_dir=dataset_folder)
 
-    if Val:
-        ## Download Val Images
-        val_dataset_url_path, val_dataset_save_path  = get_mscoco_captioning_val_2017_images_path()
+    if val:
+        # Download Val Images
+        val_dataset_url_path, val_dataset_save_path = get_mscoco_captioning_val_2017_images_path()
         val_save_path = dataset_folder + "/" + val_dataset_save_path
         download_url(url=val_dataset_url_path, save_path=val_save_path)
         extract_and_remove_zip_file(full_path=val_save_path, target_dir=dataset_folder)
-    
+
+
 def get_mscoco_captioning_train_2017_images_path():
     # returns download url of image captioning 2017 train images
-    return "http://images.cocodataset.org/zips/train2017.zip","train2017.zip"
-   
+    return "http://images.cocodataset.org/zips/train2017.zip", "train2017.zip"
+
+
 def get_mscoco_captioning_val_2017_images_path():
     # returns download url of image captioning 2017 validation images
-    return "http://images.cocodataset.org/zips/val2017.zip","val2017.zip"
+    return "http://images.cocodataset.org/zips/val2017.zip", "val2017.zip"
+
 
 def get_mscoco_captioning_2017_annotations_path():
     # returns download url of image captioning 2017 annotations
-    return "http://images.cocodataset.org/annotations/annotations_trainval2017.zip","annotations2017.zip"
+    return "http://images.cocodataset.org/annotations/annotations_trainval2017.zip", "annotations2017.zip"
+
 
 def load_mscoco_annotations_val():
-   
     ann_path = get_val_ann_path()
 
     with open(ann_path) as f:
@@ -112,32 +118,34 @@ def load_mscoco_annotations_train():
 
 def get_val_ann_path():
     return get_dataset_folder() + "/" \
-    + "annotations" + "/" + "captions_val2017.json" 
+           + "annotations" + "/" + "captions_val2017.json"
+
 
 def get_val_image_path():
     return get_dataset_folder() + "/" \
-        "val2017"
+                                  "val2017"
+
 
 def get_train_ann_path():
     return get_dataset_folder() + "/" \
-    + "annotations" + "/" + "captions_train2017.json" 
+           + "annotations" + "/" + "captions_train2017.json"
+
 
 def get_train_image_path():
     return get_dataset_folder() + "/" \
-        "train2017"
+                                  "train2017"
+
 
 def load_image(path):
     # reads the image with given path
-    
-    
+
     return Image.open(path)
+
 
 def show_image(img):
     # shows the given image
     img.show()
 
+
 def gray_to_RGB(im):
     return im.convert('RGB')
-    
-    
-   

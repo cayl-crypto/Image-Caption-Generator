@@ -28,7 +28,7 @@ and will not generate a meaningful caption.
 
 # Tokenize captions is done.
 # print("Loading val_captions_tokens.pt ...")
-##val_captions_tokens = np.load('val_captions_tokens.npy')
+# val_captions_tokens = np.load('val_captions_tokens.npy')
 train_captions_tokens = torch.load('train_captions_tokens.pt')
 
 # print("Captions are loaded.")
@@ -36,8 +36,8 @@ voc = Voc(name="Vocabulary")
 voc.load_vocabulary()
 voc_size = len(voc.index2word)
 
-##print(voc.index2word[s])
-## Vocabulary is loaded.
+# print(voc.index2word[s])
+#  Vocabulary is loaded.
 # train_normalized_captions = normalizeAllCaptions(train_captions)
 #
 # print()
@@ -95,52 +95,52 @@ encoder = inception_v3(pretrained=True)
 encoder.eval()
 encoder.cuda()
 preprocess = transforms.Compose([
-    transforms.Resize(80),
-    transforms.CenterCrop(80),
+    transforms.Resize(160),
+    transforms.CenterCrop(160),
     transforms.ToTensor(),
     transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
 ])
-# feature_size = 2048
+feature_size = 2048
 
-# all_image_features = torch.zeros(len(train_image_names), feature_size)
-# feature_extraction_batch_size = 100
-# image_batch = torch.zeros(feature_extraction_batch_size, 3, 80, 80)
-# start_ids_of_batch = 0
-# end_ids_of_batch = start_ids_of_batch + feature_extraction_batch_size
+all_image_features = torch.zeros(len(train_image_names), feature_size)
+feature_extraction_batch_size = 100
+image_batch = torch.zeros(feature_extraction_batch_size, 3, 80, 80)
+start_ids_of_batch = 0
+end_ids_of_batch = start_ids_of_batch + feature_extraction_batch_size
 
 
-# def batch_extractor(model, batch):
-#     with torch.no_grad():
-#         features = model.forward(batch)
-#     return features
-#
-#
-# # Extract all features with batches
-# for ids, im_path in tqdm(enumerate(train_image_names)):
-#     # completes in about 30 mins.
-#     im = load_image(im_path)
-#     im = gray_to_RGB(im)
-#     im = preprocess(im)
-#     batch_index = ids % feature_extraction_batch_size
-#     image_batch[batch_index] = im
-#
-#     if ids == len(train_image_names) - 1:
-#         batch_size = ids % 100
-#         image_batch_features = batch_extractor(encoder, image_batch[:batch_size + 1])
-#         all_image_features[start_ids_of_batch:ids + 1] = image_batch_features
-#         break
-#
-#     if batch_index == feature_extraction_batch_size - 1:
-#         image_batch_features = batch_extractor(encoder, image_batch)
-#         all_image_features[start_ids_of_batch:end_ids_of_batch] = image_batch_features
-#         start_ids_of_batch = end_ids_of_batch
-#         end_ids_of_batch = start_ids_of_batch + feature_extraction_batch_size
-#
-# train_features = all_image_features.to('cpu')
-# torch.save(train_features, 'train_image_features.pt')
+def batch_extractor(model, batch):
+    with torch.no_grad():
+        features = model.forward(batch)
+    return features
+
+
+# Extract all features with batches
+for ids, im_path in tqdm(enumerate(train_image_names)):
+    # completes in about 30 mins.
+    im = load_image(im_path)
+    im = gray_to_RGB(im)
+    im = preprocess(im)
+    batch_index = ids % feature_extraction_batch_size
+    image_batch[batch_index] = im
+
+    if ids == len(train_image_names) - 1:
+        batch_size = ids % 100
+        image_batch_features = batch_extractor(encoder, image_batch[:batch_size + 1])
+        all_image_features[start_ids_of_batch:ids + 1] = image_batch_features
+        break
+
+    if batch_index == feature_extraction_batch_size - 1:
+        image_batch_features = batch_extractor(encoder, image_batch)
+        all_image_features[start_ids_of_batch:end_ids_of_batch] = image_batch_features
+        start_ids_of_batch = end_ids_of_batch
+        end_ids_of_batch = start_ids_of_batch + feature_extraction_batch_size
+
+train_features = all_image_features.to('cpu')
+torch.save(train_features, 'train_image_features.pt')
 # val_features=all_image_features
 
-print("Loading val_image_features.pt ...")
+print("Loading train_image_features.pt ...")
 train_features = torch.load("train_image_features.pt")
 print("Features are loaded.")
 # DONE Design the model and batchify the dataset for training
@@ -182,10 +182,10 @@ class Decoder(nn.Module):
         return output, hidden
 
 
-dec = Decoder(hidden_size=hidden_size, output_size=output_size, embed_size=embed_size, num_layers=num_layers,
-              feature_size=feature_size)
-dec.cuda()
-dec.train()
+# dec = Decoder(hidden_size=hidden_size, output_size=output_size, embed_size=embed_size, num_layers=num_layers,
+#               feature_size=feature_size)
+# dec.cuda()
+# dec.train()
 
 
 # print(dec)
@@ -292,7 +292,7 @@ def train(decoder, batch_size=128, n_iters=20, print_every=1000, learning_rate=0
             decoder.train()
 
 
-train(decoder=dec, n_iters=2000, print_every=500, learning_rate=0.01)
+# train(decoder=dec, n_iters=2000, print_every=500, learning_rate=0.01)
 # Model class must be defined somewhere
 # model = torch.load("best_decoder.pt")
 

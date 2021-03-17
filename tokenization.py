@@ -1,7 +1,7 @@
 from tqdm import tqdm
 
+
 def tokenize(vocabulary, captions):
-    
     print()
     print("Tokenizing captions...")
     tokenized_captions = []
@@ -10,10 +10,10 @@ def tokenize(vocabulary, captions):
         for word in caption.split(" "):
             if word in vocabulary.word2index:
                 caption_tokens.append(vocabulary.word2index[word])
-           
+
         tokenized_captions.append(caption_tokens)
     return tokenized_captions
-        
+
 
 def get_maximum_length_of_captions(tokenized_captions):
     max_len = 0
@@ -31,7 +31,7 @@ def pad_sequences(sequences, mlen=12):
 
     print("Padding tokens...")
     for sequence in tqdm(sequences):
-        
+
         for i in range(mlen - len(sequence) + 1):
             sequence.append(0)
         padded_tokens.append(sequence)
