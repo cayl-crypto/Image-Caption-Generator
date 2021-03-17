@@ -24,7 +24,7 @@ def get_maximum_length_of_captions(tokenized_captions):
     return max_len
 
 
-def pad_sequences(sequences, mlen=15):
+def pad_sequences(sequences, mlen=12):
     max_len = get_maximum_length_of_captions(sequences)
 
     padded_tokens = []

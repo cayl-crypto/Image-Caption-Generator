@@ -20,7 +20,7 @@ def extract_and_remove_zip_file(full_path, target_dir):
         zipObj.extractall(path=target_dir)
     os.remove(full_path)
 
-def create_dataset_folder(dataset_folder):
+def check_dataset_folder(dataset_folder):
     try:
         os.mkdir(dataset_folder)
         print("Directory ", dataset_folder, " Created ")
@@ -88,6 +88,27 @@ def load_mscoco_annotations_val():
         all_img_names.append(full_coco_image_path)
         all_captions.append(caption)
     return all_captions, all_img_names
+
+
+def load_mscoco_annotations_train():
+    ann_path = get_train_ann_path()
+
+    with open(ann_path) as f:
+        annotations = json.load(f)
+
+    # Store captions and image names in vectors
+    all_captions = []
+    all_img_names = []
+    print("Loading dataset...")
+    for annot in tqdm(annotations['annotations']):
+        caption = 'soc ' + annot['caption'] + ' eoc'
+        image_id = annot['image_id']
+        full_coco_image_path = get_train_image_path() + "/" + '%012d.jpg' % (image_id)
+
+        all_img_names.append(full_coco_image_path)
+        all_captions.append(caption)
+    return all_captions, all_img_names
+
 
 def get_val_ann_path():
     return get_dataset_folder() + "/" \
