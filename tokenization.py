@@ -32,7 +32,7 @@ def pad_sequences(sequences, mlen=12):
     print("Padding tokens...")
     for sequence in tqdm(sequences):
 
-        for i in range(mlen - len(sequence) + 1):
+        for i in range(max_len - len(sequence) + 1):
             sequence.append(0)
         padded_tokens.append(sequence)
 

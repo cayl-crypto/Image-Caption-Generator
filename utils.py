@@ -116,6 +116,24 @@ def load_mscoco_annotations_train():
     return all_captions, all_img_names
 
 
+def load_mscoco_annotations_from_path(dataset_folder: str, ann_path: str, image_path: str):
+    with open(ann_path) as f:
+        annotations = json.load(f)
+
+    # Store captions and image names in vectors
+    all_captions = []
+    all_img_names = []
+    print("Loading dataset...")
+    for annot in tqdm(annotations['annotations']):
+        caption = 'soc ' + annot['caption'] + ' eoc'
+        image_id = annot['image_id']
+        full_coco_image_path = dataset_folder + "/" + image_path + "/" + '%012d.jpg' % (image_id)
+
+        all_img_names.append(full_coco_image_path)
+        all_captions.append(caption)
+    return all_captions, all_img_names
+
+
 def get_val_ann_path():
     return get_dataset_folder() + "/" \
            + "annotations" + "/" + "captions_val2017.json"
